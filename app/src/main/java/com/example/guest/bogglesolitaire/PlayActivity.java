@@ -1,5 +1,6 @@
 package com.example.guest.bogglesolitaire;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,22 +10,16 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class PlayActivity extends AppCompatActivity implements View.OnClickListener {
-//    @Bind(R.id.textView1) TextView mTextView1;
-//    @Bind(R.id.textView2) TextView mTextView2;
-//    @Bind(R.id.textView3) TextView mTextView3;
-//    @Bind(R.id.textView4) TextView mTextView4;
-//    @Bind(R.id.textView5) TextView mTextView5;
-//    @Bind(R.id.textView6) TextView mTextView6;
-//    @Bind(R.id.textView7) TextView mTextView7;
-//    @Bind(R.id.textView8) TextView mTextView8;
     @Bind(R.id.rollDice) Button mRollDice;
     @Bind(R.id.editText) EditText mEditText;
     @Bind(R.id.wordButton) Button mWordButton;
@@ -32,6 +27,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     public static final String TAG = PlayActivity.class.getSimpleName();
     private final String [] consonants = new String [] {"B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "Q", "R", "S", "T", "V", "W", "X", "Y", "Z"};
     private final String [] vowels = new String [] {"A", "E", "I", "O", "U"};
+    String [] randomLetters = new String[8];
 
 
     @Override
@@ -47,10 +43,8 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         ButterKnife.bind(this);
+        String [] letters = new String[8];
         if(v == mRollDice) {
-            String [] letters = new String[8];
-            String [] randomLetters = new String[8];
-//            private String [] textViewArray = new String [] {mTextView1, mTextView2, mTextView3, mTextView4, mTextView5, mTextView6, mTextView7, mTextView8};
             int keepOn = letters.length;
             for (int i = 0; i < 2; i++) {
                 int randomNum = (int) (Math.random()*100);
@@ -61,7 +55,6 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 letters[i] = consonants[randomNum%consonants.length];
             }
             while(keepOn > 0) {
-
                 int randomNum = (int) (Math.random()*100);
                 randomNum = randomNum % letters.length;
                 if(!letters[randomNum].equals("")) {
@@ -70,17 +63,30 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                     keepOn = keepOn - 1;
                 }
             }
-//            for (int j = 0; j <= randomLetters.length; j++) {
-//                for (int i = 0; i <= textViewArray.length; i++) {
-//                    if (randomLetters[j] == textViewArray[i]) {
             ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, randomLetters);
             mLetterList.setAdapter(adapter);
-//                    }
-//                }
-//        }
         }
         else if(v == mWordButton) {
-
+            boolean wordCheck = true;
+            boolean badWord = true;
+            String userText = mEditText.getText().toString();
+            for(int i = 0; i < userText.length(); i++) {
+                if(!Arrays.asList(randomLetters).contains(Character.toString(userText.charAt(i)))) {
+                    badWord = false;
+                }
+            } if (userText.length() < 3) {
+                wordCheck = false;
+            } if (wordCheck == false) {
+                Toast.makeText(PlayActivity.this, "Your answer needs to be at least 3 characters long!", Toast.LENGTH_SHORT).show();
+                return;
+            } if (badWord == false) {
+                Toast.makeText(PlayActivity.this, "Your answer needs to only include the letters we gave you!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(wordCheck && badWord) {
+                Intent intent = new Intent(PlayActivity.this, WinActivity.class);
+                startActivity(intent);
+            }
         }
     }
 }
