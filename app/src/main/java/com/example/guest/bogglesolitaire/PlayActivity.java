@@ -46,7 +46,7 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
         ButterKnife.bind(this);
         if(v == mRollDice) {
             String [] letters = new String[8];
-            List<String> randomLetters = new ArrayList<String>();
+            String [] randomLetters = new String[8];
             int keepOn = letters.length;
             for (int i = 0; i < 2; i++) {
                 int randomNum = (int) (Math.random()*100);
@@ -57,15 +57,15 @@ public class PlayActivity extends AppCompatActivity implements View.OnClickListe
                 letters[i] = consonants[randomNum%consonants.length];
             }
             while(keepOn > 0) {
-                int randomNum = (int) (Math.random()*100)%keepOn;
+
+                int randomNum = (int) (Math.random()*100);
+                randomNum = randomNum % letters.length;
                 if(!letters[randomNum].equals("")) {
-                    randomLetters.add(letters[randomNum]);
+                    randomLetters[8-keepOn] = letters[randomNum];
                     letters[randomNum] = "";
-                    keepOn--;
+                    keepOn = keepOn - 1;
                 }
             }
-            Log.d(TAG, randomLetters.get(0));
-            Log.d(TAG, randomLetters.get(7));
         }
         else if(v == mWordButton) {
 
